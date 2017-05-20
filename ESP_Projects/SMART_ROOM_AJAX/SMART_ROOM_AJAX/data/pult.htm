@@ -1,0 +1,97 @@
+<html><head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title>Smart-Room</title>
+	<link rel="stylesheet" href="style.css">
+<SCRIPT>
+var xmlHttp=createXmlHttpObject();
+function createXmlHttpObject(){
+ if(window.XMLHttpRequest){
+    xmlHttp=new XMLHttpRequest();
+ }else{
+    xmlHttp=new ActiveXObject('Microsoft.XMLHTTP');
+ }
+ return xmlHttp;
+}
+function process(){
+ if(xmlHttp.readyState==0 || xmlHttp.readyState==4){
+   xmlHttp.open('PUT','xml',true);
+   xmlHttp.onreadystatechange=handleServerResponse;
+   xmlHttp.send(null);
+ }
+ setTimeout('process()',1000);
+}
+function handleServerResponse(){
+ if(xmlHttp.readyState==4 && xmlHttp.status==200){
+   xmlResponse=xmlHttp.responseXML;
+   
+   xmldoc = xmlResponse.getElementsByTagName('response');
+   message = xmldoc[0].firstChild.nodeValue;
+   document.getElementById('runtime').value=message;
+   
+   xmldoc = xmlResponse.getElementsByTagName('alert_time');
+   message = xmldoc[0].firstChild.nodeValue;
+   document.getElementById('ALERTTIME').value=message;
+        
+   xmldoc = xmlResponse.getElementsByTagName('time');
+   message = xmldoc[0].firstChild.nodeValue;
+   document.getElementById('TIME').value=message;
+   
+  }
+}
+	
+function sendbutton(Pin){
+server = "/Reley?state=" + Pin;
+request = new XMLHttpRequest();
+request.open("GET", server, true);
+request.send();
+
+}
+function set_alert(){
+h = document.getElementById('ALERTH').value;
+m = document.getElementById('ALERTM').value;
+server = "/Time?h="+h+"&m="+m+"&Set=Set";
+request = new XMLHttpRequest();
+request.open("GET", server, true);
+request.send();
+}
+</SCRIPT>
+	
+	
+</head>
+<BODY onload="process();">
+<h3 class="top">SMART-ROOM - Пульт</h3>
+<div class="menu">
+	<a href='index.htm'>Главная</a>
+	<a href="pult.htm">Пульт</a>
+	<a href="setup.htm">Установки</a> 
+	<a href="help.htm">Помощь</a>
+	<a href='edit'>Загрузка файлов</a>
+	
+</div>
+
+<table class="details">
+<caption>Умная комната</caption>
+    <tr>
+        <td>
+            
+            <p align="center">Люстра<br><input type="submit" name="state" value="6" onclick="sendbutton(6);"> 
+                <input type="submit" name="state" value="5" onclick="sendbutton(5);"> <input type="submit" name="state" value="4" onclick="sendbutton(4);"> 
+                <input type="submit" name="state" value="3" onclick="sendbutton(3);"> <input type="submit" name="state" value="2" onclick="sendbutton(2);"> 
+                <input type="submit" name="state" value="1" onclick="sendbutton(1);"> <input type="submit" name="state" value="0" onclick="sendbutton(0);"></p>
+            
+            
+            <p align="left">Время: <input type="text" name="h" id="TIME" value="00" size="2"> <br>
+            Время работы ESP: <input type="text" name="h" id="runtime" value="00" size="8"><br> 
+            Будильник установлен: <input type="text" name="h" id="ALERTTIME" value="00" size="8">
+            <p align="left">&nbsp;Установить будильник: <input type="text" name="h" id="ALERTH" value="00" size="2">:<input type="text" name="m" id="ALERTM" value="00" size="2"><input type="submit" name="Set" value="Set" onclick="set_alert();">&nbsp;</p>
+               </td>
+    </tr>
+    <tr>
+        <td>
+            <p>&nbsp;</p>
+        </td>
+    </tr>
+</table>
+
+<div class="copyright">Сайт:  <a href="http://ESP8266-ArduinoIDE.ru" target="_blank">ESP8266-ArduinoIDE.ru</a></div>
+</body></html>
